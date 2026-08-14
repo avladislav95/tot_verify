@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>time of toys — Web3 Pass</title>
+    <!-- Официальный актуальный скрипт TON Connect UI из CDN -->
+    <script src="https://unpkg.com"></script>
+    <style>
+        body {
+            background-color: #0E0E10;
+            color: #F5F5F7;
+            font-family: -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+        .container {
+            width: 100%;
+            max-width: 400px;
+            padding: 24px;
+            box-sizing: border-box;
+            text-align: center;
+        }
+        .logo-space { margin-bottom: 32px; }
+        .logo-icon {
+            font-size: 45px;
+            margin-bottom: 12px;
+            display: inline-block;
+            filter: drop-shadow(0px 4px 10px rgba(212, 175, 55, 0.3));
+        }
+        h2 { color: #D4AF37; font-weight: 300; letter-spacing: 3px; text-transform: uppercase; font-size: 20px; margin: 0 0 16px 0; }
+        p { font-size: 14px; color: #8E8E93; line-height: 1.6; margin: 0 0 32px 0; }
+        #ton-connect-btn {
+            display: flex;
+            justify-content: center;
+            margin: 20px auto;
+        }
+        .status { margin-top: 24px; font-size: 14px; color: #30D158; font-weight: bold; display: none; line-height: 1.4; }
+        .error { color: #FF453A; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo-space">
+            <span class="logo-icon">🧶</span>
+            <h2>Phygital Verification</h2>
+        </div>
+
+        <p>Подключите ваш TON-кошелек (Tonkeeper / MyTonWallet / Wallet), на котором хранится NFT-паспорт <b>time of toys</b>. Система автоматически проверит владение токеном.</p>
+
+        <!-- Сюда TON Connect UI вставит премиальную кнопку -->
+        <div id="ton-connect-btn"></div>
+
+        <div class="status" id="status-text"></div>
+    </div>
+
+    <script>
+        // Инициализация TON Connect UI с легитимным манифестом
+        const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
+            manifestUrl: 'https://githubusercontent.com',
+            buttonRootId: 'ton-connect-btn'
+        });
+
+        // Получаем параметры tg_id из URL (например: ?tg_id=12345)
+        const urlParams = new URLSearchParams(window.location.search);
+        const tgId = urlParams.get('tg_id');
+
+        const statusText = document.getElementById('status-text');
+
+        if (!tgId) {
+            statusText.style.display = "block";
+            statusText.className = "status error";
+            statusText.innerText = "❌ Ошибка: Откройте страницу строго через Telegram-бота!";
+        }
+
+        // Подписываемся на изменение статуса кошелька (когда юзер нажал "Подключить" в приложении)
+        tonConnectUI.onStatusChange(async (wallet) => {
+            if (wallet && tgId) {
+                // Извлекаем адрес кошелька в формате Raw/User-friendly
+                const walletAddress = wallet.account.address;
+                
+                statusText.style.display = "block";
+                statusText.className = "status";
+                statusText.innerText = "⏳ Передаем данные в мастерскую...";
+
+                // ВАЖНО: Замените этот URL на ваш реальный домен на PythonAnywhere!
+                const BACKEND_URL = 'https://timeoftoys.pythonanywhere.com';
+
+                try {
+                    const response = await fetch(BACKEND_URL, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            tg_id: tgId,
+                            wallet: walletAddress
+                        })
+                    });
+
+                    if (response.ok) {
+                        statusText.innerText = "✅ Кошелек успешно привязан!\nВернитесь в Telegram-бот для завершения.";
+                        // Через 2 секунды автоматически перекидываем обратно в бота
+                        setTimeout(() => {
+                            window.location.href = "tg://resolve?domain=time_of_toys_bot";
+                        }, 2000);
+                    } else {
+                        statusText.className = "status error";
+                        statusText.innerText = "❌ Ошибка сервера при передаче данных.";
+                    }
+                } catch (error) {
+                    statusText.className = "status error";
+                    statusText.innerText = "❌ Не удалось связаться с сервером.";
+                }
+            }
+        });
+    </script>
+</body>
+</html>
