@@ -1,342 +1,334 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Time Of Toys - Phygital Pass</title>
-    <style>
-        body {
-            background-color: #0E0E10;
-            color: #F5F5F7;
-            font-family: -apple-system, BlinkMacSystemFont, Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            -webkit-font-smoothing: antialiased;
-        }
-        .container {
-            width: 100%;
-            max-width: 400px;
-            padding: 24px;
-            box-sizing: border-box;
-            text-align: center;
-        }
-        .logo-space { margin-bottom: 32px; }
-        .logo-icon {
-            font-size: 45px;
-            margin-bottom: 12px;
-            display: inline-block;
-            filter: drop-shadow(0px 4px 10px rgba(212, 175, 55, 0.3));
-            font-family: system-ui;
-        }
-        h2 { color: #D4AF37; font-weight: 300; letter-spacing: 3px; text-transform: uppercase; font-size: 22px; margin: 0 0 16px 0; }
-        p { font-size: 14px; color: #8E8E93; line-height: 1.6; margin: 0 0 32px 0; }
-        .divider { height: 1px; background-color: #2C2C2E; margin: 32px 0; }
-        .btn {
-            background: rgba(30, 30, 30, 0.1);
-            color: #D4AF37;
-            border: 1px solid rgba(212, 175, 55, 0.5);
-            box-shadow: 0px 4px 15px rgba(212, 175, 55, 0.05);
-            text-decoration: none;
-            display: block;
-            box-sizing: border-box;
-            width: 100%;
-            padding: 16px;
-            border-radius: 12px;
-            font-weight: bold;
-            font-size: 14px;
-            letter-spacing: 0.5px;
-            transition: all 0.3s ease;
-            margin-bottom: 16px;
-            cursor: pointer;
-        }
-        .btn:hover, .btn:active {
-            background: rgba(212, 175, 55, 0.1);
-            border-color: #D4AF37;
-            box-shadow: 0px 4px 20px rgba(212, 175, 55, 0.2);
-        }
-        #connect-status {
-            margin-top: 20px;
-            font-size: 14px;
-            color: #30D158;
-            font-weight: bold;
-            display: none;
-            line-height: 1.4;
-        }
-        #connect-error {
-            color: #FF453A;
-            display: none;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phygital Pass Verification</title>
+  <meta name="description" content="Official Phygital Toys Web3 Connection">
+
+  <!-- Apple-style system fonts -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fontsource/4.260.0/css/fontsource.css">
+  <style>
+    /* Deep dark background */
+    body {
+      background: #0E0E10;
+      color: #F5F5F7;
+      margin: 0;
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 0;
+      transition: background 0.3s;
+    }
+
+    /* Main container */
+    .container {
+      background: #121212;
+      border-radius: 28px;
+      box-shadow: 0 12px 32px rgba(20,20,20,0.35);
+      padding: 2.5rem 2.5rem 2rem 2.5rem;
+      width: 95vw;
+      max-width: 430px;
+      text-align: center;
+      position: relative;
+    }
+
+    /* Title */
+    h2 {
+      font-family: -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+      color: #D4AF37;
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: 3px;
+      margin-bottom: 1rem;
+      text-shadow: 0 2px 6px rgba(212,175,55,0.2);
+    }
+
+    /* Emoji icon */
+    .emoji-icon {
+      font-size: 52px;
+      margin-bottom: 0.6rem;
+      filter: drop-shadow(0 4px 16px rgba(212,175,55,0.18));
+      user-select: none;
+    }
+
+    /* Welcome text */
+    p.welcome {
+      color: #8E8E93;
+      font-size: 1.15rem;
+      margin-bottom: 1.2rem;
+      line-height: 1.7;
+    }
+
+    /* Getgems button */
+    a.getgems-btn {
+      display: inline-block;
+      background: transparent;
+      border: 1px solid rgba(212,175,55,0.5);
+      color: #D4AF37;
+      font-family: -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      padding: 0.55em 1.25em;
+      border-radius: 12px;
+      text-decoration: none;
+      letter-spacing: 1px;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      box-shadow: 0 2px 8px rgba(212,175,55,0.08);
+      cursor: pointer;
+      outline: none;
+      margin-bottom: 1.6rem;
+    }
+    a.getgems-btn:hover {
+      border-color: #D4AF37;
+      background: linear-gradient(90deg, #D4AF37 0%, #AA7C11 100%) 0.07em 0;
+      box-shadow: 0 4px 16px rgba(212,175,55,0.22);
+    }
+    a.getgems-btn::after {
+      content: "";
+      display: block;
+      width: 0;
+      height: 2px;
+      background: #D4AF37;
+      transition: width 0.3s;
+    }
+    a.getgems-btn:hover::after {
+      width: 100%;
+    }
+
+    /* Separator */
+    .separator {
+      height: 1.2px;
+      background: #2C2C2E;
+      margin: 2rem 0;
+    }
+
+    /* Instruction text */
+    p.instruction {
+      color: #BFBFBF;
+      font-size: 1rem;
+      margin-bottom: 1.5rem;
+      line-height: 1.7;
+    }
+
+    /* TON Connect container */
+    #ton-connect-button {
+      display: inline-block;
+      width: 280px;
+      height: 68px;
+      background: transparent;
+      border-radius: 12px;
+      margin: 0 auto 2rem auto;
+      box-shadow: 0 2px 16px rgba(20,20,20,0.15);
+      overflow: hidden;
+      cursor: pointer;
+      position: relative;
+      transition: box-shadow 0.2s;
+    }
+    #ton-connect-button:hover {
+      box-shadow: 0 6px 24px rgba(212,175,55,0.22);
+    }
+
+    /* Status block */
+    #status-text {
+      display: inline-block;
+      min-width: 220px;
+      color: #F5F5F7;
+      font-size: 0.98rem;
+      font-weight: 500;
+      margin-top: 0.5rem;
+      margin-left: auto;
+      margin-right: auto;
+      text-align: left;
+      transition: color 0.2s, background 0.2s;
+    }
+    #status-text.success {
+      color: #2DCC70;
+      background: linear-gradient(90deg, #E3F2E8 0%, #D4AF37 100%) 0 1px;
+    }
+    #status-text.error {
+      color: #A00;
+      background: #1C1C1C;
+    }
+    #status-text.waiting {
+      color: #E6E6E6;
+      background: #222;
+      animation: pulse 1s infinite;
+    }
+    @keyframes pulse {
+      0% { opacity: 1; }
+      50% { opacity: 0.8; }
+      100% { opacity: 1; }
+    }
+
+    /* Hide default TON Connect UI styles, apply our custom */
+    ton-connect__button,
+    ton-connect__button[style*="background"] {
+      !important;
+    }
+    ton-connect__button {
+      background: linear-gradient(135deg, #D4AF37 0%, #AA7C11 100%) !important;
+      color: #000 !important;
+      border-radius: 12px !important;
+      box-shadow: none !important;
+      font-weight: 600 !important;
+      font-size: 1rem !important;
+      border: none !important;
+      padding: 0.4em 1.2em !important;
+      transition: background 0.3s, color 0.3s;
+      outline: none !important;
+    }
+    ton-connect__button:hover {
+      background: linear-gradient(135deg, #FFD166 0%, #AA7C11 100%) !important;
+    }
+    ton-connect__modal {
+      background: #222 !important;
+      border-radius: 18px !important;
+      box-shadow: 0 8px 32px rgba(20,20,20,0.25) !important;
+      z-index: 2001 !important;
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      .container { padding: 1rem 0.8rem 0.5rem 0.8rem; }
+      h2 { font-size: 1.4rem; }
+      .emoji-icon { font-size: 32px; }
+      a.getgems-btn { font-size: 0.95rem; padding: 0.35em 0.7em; }
+      #ton-connect-button { width: 95vw; height: 48px; margin: 0.7rem 0; }
+    }
+  </style>
+
+  <!-- TON Connect SDK v2.0.9 from GitHub CDN -->
+  <script src="https://github.io/tonorg/tonconnect/releases/download/v2.0.9/tonconnect.min.js"></script>
+
+  <!-- Favicon (optional, for completeness) -->
+  <!-- <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2224%22 height=%2224%22 viewBox=%220 0 24 24%22><circle cx=%2212%22 cy=%2212%22 r=%2210%22 fill=%22#D4AF37%22><text x=%2212%22 y=%2219%22 font-size=%222%22 fill=%23000%22 text-anchor=%22middle%22>🧶</text></svg>"> -->
+
 </head>
 <body>
-    <div class="container">
-        <div class="logo-space">
-            <span class="logo-icon">🧶</span>
-            <h2>Phygital Pass Verification</h2>
-        </div>
+  <div class="container">
+    <div>
+      <span class="emoji-icon">🧶</span>
+      <h2>Phygital Pass Verification</h2>
+      <p class="welcome">
+        Добро пожаловать в закрытый клуб владельцев лимитированных Phygital-коллекций вязаных игрушек ручной работы Time of Toys. У вас еще нет NFT-паспорта из коллекции?
+      </p>
+      <a href="https://getgems.io" class="getgems-btn" target="_blank" rel="noopener noreferrer">
+        🛍️ Открыть коллекцию на Getgems
+      </a>
+      <div class="separator"></div>
+      <p class="instruction">
+        Уже владеете NFT-паспортом персонажа? Подключите кошелек для мгновенной верификации и оформления премиальной доставки.
+      </p>
+      <div id="ton-connect-button"></div>
+      <div id="status-text" style="display:none"></div>
+  </div>
 
-        <p>Добро пожаловать в закрытый клуб владельцев лимитированных Phygital-коллекций вязаных игрушек ручной работы <b>Time of Toys</b>.</p>
-        <p>
-            У вас еще нет NFT-паспорта из коллекции?
-            <br><br>
-            <button class="btn" onclick="openGetgems()">🛍️ Открыть коллекцию на Getgems</button>
-        </p>
+  <script>
+    // === 1. Парсим tg_id из адресной строки ===
+    const urlParams = new URLSearchParams(window.location.search);
+    const tgId = urlParams.get("tg_id");
 
-        <div class="divider"></div>
-
-        <p>
-            Уже владеете NFT-паспортом? 
-            <br>Подключите кошелек Ton для мгновенной верификации и оформления премиальной доставки.
-        </p>
-
-        <button id="connect-btn" class="btn" onclick="openTonWallet()">Подключить кошелек Ton</button>
-
-        <div id="connect-status" style="display:none; color:#222; font-weight:bold;"></div>
-        <div id="connect-error" style="display:none; color:#e00;"></div>
-    </div>
-
-    <!-- Ton SDK CDN -->
-    <script type="module" src="https://cdn.jsdelivr.net/npm/@tonweb/ton@latest/dist/ton.cjs"></script>
-
-    <script>
-        // Адрес коллекции (для ссылки)
-        const COLLECTION_ADDRESS = "EQCtAkEC6kdLU6lMHoXubJY3nB16YBMJOkNrqVuINxFNREBN";
-
-        // Сохраняем tg_id из URL (например, tg://resolve?tg_id=123...)
-        const urlParams = new URLSearchParams(window.location.search);
-        const tgId = urlParams.get('tg_id');
-
-        // Элементы UI
-        const connectBtn = document.getElementById('connect-btn');
-        const connectStatus = document.getElementById('connect-status');
-        const connectError = document.getElementById('connect-error');
-
-        // Функция открытия Getgems
-        function openGetgems() {
-            window.open(`https://getgems.io/collections/${COLLECTION_ADDRESS}`, "_blank");
-        }
-
-        // Проверяем tg_id при первой загрузке
-        if (!tgId) {
-            connectStatus.style.display = "block";
-            connectStatus.className = "connect-error";
-            connectStatus.textContent = "❌ Ошибка: Откройте страницу через кнопку из Telegram-бота!";
-            connectBtn.disabled = true;
-            return;
-        }
-
-        // Ton SDK инициализация
-        const { Ton } = Ton.default;
-        let tonInstance = null;
-
-        // При нажатии на "Подключить кошелек"
-        async function openTonWallet() {
-            connectBtn.disabled = true;
-            connectStatus.style.display = "block";
-            connectStatus.textContent = "⏳ Поиск кошелька Ton...";
-            connectError.textContent = "";
-
-            try {
-                // Открываем consent-диалог для подключения кошелька
-                if (tonInstance == null) {
-                    tonInstance = new Ton({ network: 'testnet' });
-                    // В Ton SDK нет UI, но можно использовать window.postMessage для обратной связи
-                    // Мы будем использовать consent-механизм через window.postMessage (стандарт для Ton SDK в браузере)
-                    // Для этого нужно слушать сообщения
-
-                    window.addEventListener('message', (event) => {
-                        if (event.data && event.data.type === 'ton/consent') {
-                            // Пользователь выбрал/отклонил кошелек
-                            if (event.data.status === 'granted') {
-                                const wallet = event.data.data;
-                                handleWalletConnected(wallet);
-                            } else if (event.data.status === 'denied') {
-                                handleWalletConnectFailed();
-                            }
-                        }
-                    });
-
-                    // Открываем consent-окно через postMessage
-                    // Для Ton SDK v6+: нужно вызвать tonInstance.consentUI.open()
-                    // Но в старых версиях через window.postMessage
-                    // Смотрим, есть ли consentUI
-                    if (tonInstance.consentUI && tonInstance.consentUI.open) {
-                        // Современный способ (Ton SDK >= v6)
-                        await tonInstance.consentUI.open();
-                    } else {
-                        // Старый способ — отправляем сообщение, чтобы открыть consent (но обычно это делает сам браузер)
-                        // Можно просто сообщить пользователю что нужно разрешить в новом вкладке
-                        connectStatus.textContent = "⚠️ Пожалуйста, разрешите кошелек в открывшемся окне браузера.";
-                        connectBtn.disabled = false;
-                        return;
-                    }
-                } else {
-                    // Если Ton уже инициализирован, просто попытаемся получить активный кошелек
-                    const wallets = await tonInstance.wallets.list();
-                    if (wallets.length > 0) {
-                        handleWalletConnected(wallets[0]);
-                    } else {
-                        connectStatus.textContent = "❌ Нет подключенного кошелька. Попробуйте ещё раз.";
-                        connectBtn.disabled = false;
-                        return;
-                    }
-                }
-
-                // Дожидаемся consentUI (можно использовать promise, если есть)
-                // В новых версиях consentUI.open() возвращает promise
-                let wallet = null;
-                if (tonInstance.consentUI && typeof tonInstance.consentUI.open === 'function') {
-                    const consentPromise = tonInstance.consentUI.open();
-                    consentPromise.then(wallet => {
-                        if (wallet) {
-                            handleWalletConnected(wallet);
-                        } else {
-                            handleWalletConnectFailed();
-                        }
-                    }).catch(() => {
-                        handleWalletConnectFailed();
-                    });
-                    // Ждём, пока пользователь не согласился
-                    // Можно добавить таймаут, но обычно ожидание идёт в consentUI
-                    // Пока consent Promise не завершится, блокируем кнопку
-                    // Можно снять блокировку после таймаута, но пока оставим так
-                } else {
-                    // Старый способ — просто ждем message
-                    // Ничего не делаем, слушатель установлен выше
-                }
-
-            } catch (error) {
-                handleWalletConnectFailed(error);
-            }
-        }
-
-        function handleWalletConnected(wallet) {
-            // wallet = { address, publicKey, ... }
-            connectBtn.disabled = false;
-            connectStatus.style.color = "#30D158";
-            connectStatus.textContent = `✅ Успешно подключено: ${wallet.address}`;
-            connectError.textContent = "";
-
-            // Отправляем данные на бэк
-            const BACKEND_URL = 'https://pythonanywhere.com/api/verify'; // замените на ваш endpoint
-            fetch(BACKEND_URL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    tg_id: tgId,
-                    wallet_address: wallet.address
-                })
-            })
-            .then(response => {
-                if (response.ok) {
-                    setTimeout(() => {
-                        window.location.href = "tg://resolve?domain=time_of_toys_bot";
-                    }, 2000);
-                } else {
-                    throw new Error("Ошибка сервера");
-                }
-            })
-            .catch(err => {
-                handleWalletConnectFailed(err);
-            });
-        }
-
-        function handleWalletConnectFailed(error = null) {
-            connectBtn.disabled = false;
-            connectStatus.style.color = "#FF453A";
-            connectStatus.textContent = "❌ Не удалось подключить кошелек. Попробуйте позже.";
-            if (error) {
-                connectError.textContent = `Ошибка: ${error.message || "Неизвестная ошибка"}`;
-            } else {
-                connectError.textContent = "";
-            }
-        }
-
-        // Опционально: можно добавить обработку нажатия "Открыть коллекцию" с проверкой tg_id
-        // Например, если tg_id нет — не открывать ссылку
-
-        // (Оставьте вашу стилизацию и остальной HTML без изменений)
-        let isConnecting = false;
-let tgId = (new URLSearchParams(window.location.search)).get('tg_id');
-
-// Проверяем tg_id только при открытии страницы
-function checkTgId() {
-    if (!tgId) {
-        document.getElementById('connect-btn').disabled = true;
-        document.getElementById('connect-status').textContent = "❌ Сначала откройте страницу из Telegram-бота!";
-        document.getElementById('connect-error').style.display = "none";
-    } else {
-        document.getElementById('connect-btn').disabled = false;
-        document.getElementById('connect-status').style.display = "none";
-        document.getElementById('connect-error').style.display = "none";
+    // === 2. Подготовка статус-блока ===
+    const statusDiv = document.getElementById('status-text');
+    function setStatus(msg, type = '') {
+      statusDiv.innerHTML = msg;
+      statusDiv.className = 'status-text ' + (type === 'success' ? 'success' : type === 'error' ? 'error' : 'waiting');
+      if (type === 'success') {
+        // После 2.5 сек автопереход в Telegram
+        setTimeout(() => {
+          window.location.href = "tg://resolve?domain=time_of_toys_bot";
+        }, 2500);
+      }
+      statusDiv.style.display = type !== 'waiting' ? 'block' : 'block';
     }
-}
-checkTgId();
+    setStatus('', 'waiting');
+    setStatus('Считывается tg_id…', 'waiting');
 
-async function openTonWallet() {
-    if (isConnecting) return; // Не даем повторно нажать во время процесса
-    isConnecting = true;
-    document.getElementById('connect-btn').disabled = true;
-    document.getElementById('connect-status').style.display = "block";
-    document.getElementById('connect-status').textContent = "⏳ Открывается окно подтверждения в Ton...";
-    document.getElementById('connect-error').style.display = "none";
-
-    try {
-        // Динамическая загрузка Ton SDK
-        const TonModule = (await import('https://cdn.jsdelivr.net/npm/@tonweb/ton@latest/dist/ton.cjs')).default;
-        const ton = new TonModule({ network: 'testnet' }); // Можно поменять на 'mainnet' если нужно
-
-        // Проверяем наличие consentUI
-        if (!ton.consentUI || !ton.consentUI.open) {
-            throw new Error("Ton SDK не поддерживает consentUI (версия SDK устарела или повреждена)");
-        }
-
-        // Открываем окно consent
-        await ton.consentUI.open();
-
-        // Ожидаем ответ из consent
-        window.addEventListener('message', handleConsentMessage, { once: true });
-    } catch (err) {
-        isConnecting = false;
-        document.getElementById('connect-btn').disabled = false;
-        document.getElementById('connect-status').style.display = "none";
-        document.getElementById('connect-error').style.display = "block";
-        document.getElementById('connect-error').textContent = "❌ Ошибка: " + (err.message || "Не удалось открыть кошелек. Проверьте интернет и попробуйте позже.");
+    // === 3. Проверка tg_id ===
+    if (!tgId || tgId === '') {
+      setStatus('❌ Ошибка: Откройте страницу строго по кнопке из Telegram-бота!', 'error');
+      return;
     }
-}
 
-// Обработка ответа от consent окна Ton
-function handleConsentMessage(event) {
-    if (
-        event.data &&
-        event.data.type === 'ton/consent' &&
-        event.data.status !== undefined
-    ) {
-        isConnecting = false;
-        document.getElementById('connect-btn').disabled = false;
-        document.getElementById('connect-status').style.display = "none";
-        document.getElementById('connect-error').style.display = "none";
-        if (event.data.status === 'granted') {
-            // Кошелек подключён!
-            const address = event.data.data?.address ?? "неизвестный адрес";
-            document.getElementById('connect-status').style.display = "block";
-            document.getElementById('connect-status').textContent = "✅ Кошелек успешно подключён: " + address;
-            // Здесь можно реализовать дальнейшую логику (например, отправить данные на сервер)
-        } else if (event.data.status === 'denied') {
-            document.getElementById('connect-status').style.display = "block";
-            document.getElementById('connect-status').textContent = "❌ Доступ к кошельку отклонён.";
+    // === 4. Инициализация TON Connect ===
+    const tonConnectUI = new TonConnectUI.TonConnectUI({
+      container: document.getElementById('ton-connect-button'),
+      theme: 'dark', // подходит по нашему фону
+      walletTypes: ['TON'], // только TON
+      // Можно добавить иконку или оверлей, но Apple-style — минимализм
+    });
+
+    // === 5. Кастомизация внешнего вида TON Connect (важно после инициализации!) ===
+    // Поиск кнопки и перекраска
+    setTimeout(() => {
+      const btn = document.querySelector('ton-connect__button');
+      if (btn) {
+        btn.style.background = 'linear-gradient(135deg, #D4AF37 0%, #AA7C11 100%)';
+        btn.style.color = '#000';
+        btn.style.borderRadius = '12px';
+      }
+    }, 400);
+
+    // === 6. Обработка событий TON Connect ===
+    let walletAddress = null;
+    tonConnectUI.onStatusChange(async (status) => {
+      if (status.type === 'connected') {
+        // Кошелек подключен
+        walletAddress = status.wallet.account.address;
+        setStatus('✅ Кошелек подключен. Отправка данных...', 'waiting');
+        await sendWalletToServer(walletAddress, tgId);
+      } else if (status.type === 'disconnected') {
+        setStatus('❌ Кошелек отключен.', 'error');
+      } else if (status.type === 'error') {
+        setStatus('❌ Ошибка TON Connect: ' + (status.error?.message || status.error), 'error');
+      } else if (status.type === 'loading') {
+        setStatus('⏳ Подключение кошелька…', 'waiting');
+      }
+    });
+
+    // === 7. POST-запрос на Flask-сервер ===
+    async function sendWalletToServer(walletAddress, tgId) {
+      const endpoint = "https://pythonanywhere.com/api/verify"; // Замените на актуальный endpoint, если нужно
+      const url = `https://pythonanywhere.com/api/verify`; // или ваш Flask-роут, например /api/verify
+      const body = {
+        "wallet_address": walletAddress,
+        "tg_id": tgId
+      };
+      const resp = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(body)
+      });
+      let msg = '';
+      let type = '';
+      if (resp.ok) {
+        const text = await resp.text();
+        if (text.trim() === 'ok' || text.trim() === 'success') {
+          msg = '✅ Кошелек успешно верифицирован!';
+          type = 'success';
         } else {
-            document.getElementById('connect-status').style.display = "block";
-            document.getElementById('connect-status').textContent = "❓ Неизвестный статус: " + event.data.status;
+          msg = '❌ Ответ от сервера: ' + text;
+          type = 'error';
         }
+      } else {
+        const err = await resp.text();
+        msg = '❌ Ошибка сети/сервера: ' + (err || 'Не удалось отправить данные');
+        type = 'error';
+      }
+      setStatus(msg, type);
     }
-}
-    </script>
+
+    // === 8. Скрыть статус "waiting" если пользователь закрывает вкладку ===
+    window.onbeforeunload = function() {
+      if (statusDiv.classList.contains('waiting')) {
+        setStatus('Процесс прерван.', 'error');
+      }
+    };
+  </script>
 </body>
 </html>
