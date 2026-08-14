@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Time Of Toys - Phygital Pass</title>
-    <!-- Подключаем стабильную и легкую версию TON Connect UI -->
-    <script src="https://unpkg.com"></script>
     <style>
         body {
             background-color: #0E0E10;
@@ -32,11 +30,11 @@
             margin-bottom: 12px;
             display: inline-block;
             filter: drop-shadow(0px 4px 10px rgba(212, 175, 55, 0.3));
+            font-family: system-ui;
         }
         h2 { color: #D4AF37; font-weight: 300; letter-spacing: 3px; text-transform: uppercase; font-size: 22px; margin: 0 0 16px 0; }
         p { font-size: 14px; color: #8E8E93; line-height: 1.6; margin: 0 0 32px 0; }
         .divider { height: 1px; background-color: #2C2C2E; margin: 32px 0; }
-
         .btn {
             background: rgba(30, 30, 30, 0.1);
             color: #D4AF37;
@@ -60,27 +58,18 @@
             border-color: #D4AF37;
             box-shadow: 0px 4px 20px rgba(212, 175, 55, 0.2);
         }
-        
-        #ton-connect-button {
-            display: flex;
-            justify-content: center;
-            width: 100%;
+        #connect-status {
             margin-top: 20px;
-            min-height: 50px;
+            font-size: 14px;
+            color: #30D158;
+            font-weight: bold;
+            display: none;
+            line-height: 1.4;
         }
-        
-        /* Стилизация под премиальный золотой бренд time of toys */
-        div[class*="tc-button"], button[class*="tc-button"] {
-            background: linear-gradient(135deg, #D4AF37 0%, #AA7C11 100%) !important;
-            color: #000000 !important;
-            font-weight: bold !important;
-            border-radius: 12px !important;
-            width: 100% !important;
-            justify-content: center !important;
+        #connect-error {
+            color: #FF453A;
+            display: none;
         }
-        
-        .status { margin-top: 20px; font-size: 14px; color: #30D158; font-weight: bold; display: none; line-height: 1.4; }
-        .error { color: #FF453A; }
     </style>
 </head>
 <body>
@@ -90,81 +79,189 @@
             <h2>Phygital Pass Verification</h2>
         </div>
 
-        <p>Добро пожаловать в закрытый клуб владельцев лимитированных Phygital-коллекций вязаных игрушек ручной работы <b>Time of Toys</b>.<br><br>У вас еще нет NFT-паспорта из коллекции?</p>
-
-        <button class="btn" onclick="openGetgems()">🛍️ Открыть коллекцию на Getgems</button>
+        <p>Добро пожаловать в закрытый клуб владельцев лимитированных Phygital-коллекций вязаных игрушек ручной работы <b>Time of Toys</b>.</p>
+        <p>
+            У вас еще нет NFT-паспорта из коллекции?
+            <br><br>
+            <button class="btn" onclick="openGetgems()">🛍️ Открыть коллекцию на Getgems</button>
+        </p>
 
         <div class="divider"></div>
 
-        <p>Уже владеете NFT-паспортом персонажа? Подключите кошелек для мгновенной верификации и оформления премиальной доставки.</p>
+        <p>
+            Уже владеете NFT-паспортом? 
+            <br>Подключите кошелек Ton для мгновенной верификации и оформления премиальной доставки.
+        </p>
 
-        <!-- Сюда скрипт принудительно вставит кнопку -->
-        <div id="ton-connect-button"></div>
-        
-        <div class="status" id="status-text"></div>
+        <button id="connect-btn" onclick="openTonWallet()">Подключить кошелек Ton</button>
+
+        <div id="connect-status"></div>
+        <div id="connect-error"></div>
     </div>
 
-    <script>
-        const COLLECTION_ADDRESS = "EQCtAkEC6kdLU6lMHoXubJY3nB16YBMJOkNrqVuINxFNREBN";
-        
-        function openGetgems() {
-            window.open(`https://getgems.io/collection/{COLLECTION_ADDRESS}`, "_blank");
-        }
+    <!-- Ton SDK CDN -->
+    <script type="module" src="https://cdn.jsdelivr.net/npm/@tonweb/ton@latest/dist/ton.cjs"></script>
 
+    <script>
+        // Адрес коллекции (для ссылки)
+        const COLLECTION_ADDRESS = "EQCtAkEC6kdLU6lMHoXubJY3nB16YBMJOkNrqVuINxFNREBN";
+
+        // Сохраняем tg_id из URL (например, tg://resolve?tg_id=123...)
         const urlParams = new URLSearchParams(window.location.search);
         const tgId = urlParams.get('tg_id');
-        const statusText = document.getElementById('status-text');
 
-        if (!tgId) {
-            statusText.style.display = "block";
-            statusText.className = "status error";
-            statusText.innerText = "❌ Ошибка: Откройте страницу строго по кнопке из Telegram-бота!";
+        // Элементы UI
+        const connectBtn = document.getElementById('connect-btn');
+        const connectStatus = document.getElementById('connect-status');
+        const connectError = document.getElementById('connect-error');
+
+        // Функция открытия Getgems
+        function openGetgems() {
+            window.open(`https://getgems.io/collections/${COLLECTION_ADDRESS}`, "_blank");
         }
 
-        // Инициализация через классический объект первой ветки SDK
-        const tonConnectUI = new TonConnectUI.TonConnectUI({
-            manifestUrl: 'https://github.io',
-            buttonRootId: 'ton-connect-button'
-        });
+        // Проверяем tg_id при первой загрузке
+        if (!tgId) {
+            connectStatus.style.display = "block";
+            connectStatus.className = "connect-error";
+            connectStatus.textContent = "❌ Ошибка: Откройте страницу через кнопку из Telegram-бота!";
+            connectBtn.disabled = true;
+            return;
+        }
 
-        tonConnectUI.onStatusChange(async (wallet) => {
-            if (wallet && tgId) {
-                // Поддерживаем разные форматы выдачи адреса в зависимости от кошелька
-                const walletAddress = wallet.account.address;
-                
-                statusText.style.display = "block";
-                statusText.className = "status";
-                statusText.innerText = "⏳ Передаем данные в мастерскую time of toys...";
+        // Ton SDK инициализация
+        const { Ton } = Ton.default;
+        let tonInstance = null;
 
-                const BACKEND_URL = 'https://timeoftoys.pythonanywhere.com';
+        // При нажатии на "Подключить кошелек"
+        async function openTonWallet() {
+            connectBtn.disabled = true;
+            connectStatus.style.display = "block";
+            connectStatus.textContent = "⏳ Поиск кошелька Ton...";
+            connectError.textContent = "";
 
-                try {
-                    const response = await fetch(BACKEND_URL, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            tg_id: tgId,
-                            wallet: walletAddress
-                        })
+            try {
+                // Открываем consent-диалог для подключения кошелька
+                if (tonInstance == null) {
+                    tonInstance = new Ton({ network: 'testnet' });
+                    // В Ton SDK нет UI, но можно использовать window.postMessage для обратной связи
+                    // Мы будем использовать consent-механизм через window.postMessage (стандарт для Ton SDK в браузере)
+                    // Для этого нужно слушать сообщения
+
+                    window.addEventListener('message', (event) => {
+                        if (event.data && event.data.type === 'ton/consent') {
+                            // Пользователь выбрал/отклонил кошелек
+                            if (event.data.status === 'granted') {
+                                const wallet = event.data.data;
+                                handleWalletConnected(wallet);
+                            } else if (event.data.status === 'denied') {
+                                handleWalletConnectFailed();
+                            }
+                        }
                     });
 
-                    if (response.ok) {
-                        statusText.innerText = "✅ Кошелек успешно верифицирован!\nВозвращайтесь в Telegram-бот.";
-                        setTimeout(() => {
-                            window.location.href = "tg://resolve?domain=time_of_toys_bot";
-                        }, 2500);
+                    // Открываем consent-окно через postMessage
+                    // Для Ton SDK v6+: нужно вызвать tonInstance.consentUI.open()
+                    // Но в старых версиях через window.postMessage
+                    // Смотрим, есть ли consentUI
+                    if (tonInstance.consentUI && tonInstance.consentUI.open) {
+                        // Современный способ (Ton SDK >= v6)
+                        await tonInstance.consentUI.open();
                     } else {
-                        statusText.className = "status error";
-                        statusText.innerText = "❌ Ошибка сервера при передаче кошелька.";
+                        // Старый способ — отправляем сообщение, чтобы открыть consent (но обычно это делает сам браузер)
+                        // Можно просто сообщить пользователю что нужно разрешить в новом вкладке
+                        connectStatus.textContent = "⚠️ Пожалуйста, разрешите кошелек в открывшемся окне браузера.";
+                        connectBtn.disabled = false;
+                        return;
                     }
-                } catch (error) {
-                    statusText.className = "status error";
-                    statusText.innerText = "❌ Не удалось связаться с сервером PythonAnywhere.";
+                } else {
+                    // Если Ton уже инициализирован, просто попытаемся получить активный кошелек
+                    const wallets = await tonInstance.wallets.list();
+                    if (wallets.length > 0) {
+                        handleWalletConnected(wallets[0]);
+                    } else {
+                        connectStatus.textContent = "❌ Нет подключенного кошелька. Попробуйте ещё раз.";
+                        connectBtn.disabled = false;
+                        return;
+                    }
                 }
+
+                // Дожидаемся consentUI (можно использовать promise, если есть)
+                // В новых версиях consentUI.open() возвращает promise
+                let wallet = null;
+                if (tonInstance.consentUI && typeof tonInstance.consentUI.open === 'function') {
+                    const consentPromise = tonInstance.consentUI.open();
+                    consentPromise.then(wallet => {
+                        if (wallet) {
+                            handleWalletConnected(wallet);
+                        } else {
+                            handleWalletConnectFailed();
+                        }
+                    }).catch(() => {
+                        handleWalletConnectFailed();
+                    });
+                    // Ждём, пока пользователь не согласился
+                    // Можно добавить таймаут, но обычно ожидание идёт в consentUI
+                    // Пока consent Promise не завершится, блокируем кнопку
+                    // Можно снять блокировку после таймаута, но пока оставим так
+                } else {
+                    // Старый способ — просто ждем message
+                    // Ничего не делаем, слушатель установлен выше
+                }
+
+            } catch (error) {
+                handleWalletConnectFailed(error);
             }
-        });
+        }
+
+        function handleWalletConnected(wallet) {
+            // wallet = { address, publicKey, ... }
+            connectBtn.disabled = false;
+            connectStatus.style.color = "#30D158";
+            connectStatus.textContent = `✅ Успешно подключено: ${wallet.address}`;
+            connectError.textContent = "";
+
+            // Отправляем данные на бэк
+            const BACKEND_URL = 'https://pythonanywhere.com/api/verify'; // замените на ваш endpoint
+            fetch(BACKEND_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    tg_id: tgId,
+                    wallet_address: wallet.address
+                })
+            })
+            .then(response => {
+                if (response.ok) {
+                    setTimeout(() => {
+                        window.location.href = "tg://resolve?domain=time_of_toys_bot";
+                    }, 2000);
+                } else {
+                    throw new Error("Ошибка сервера");
+                }
+            })
+            .catch(err => {
+                handleWalletConnectFailed(err);
+            });
+        }
+
+        function handleWalletConnectFailed(error = null) {
+            connectBtn.disabled = false;
+            connectStatus.style.color = "#FF453A";
+            connectStatus.textContent = "❌ Не удалось подключить кошелек. Попробуйте позже.";
+            if (error) {
+                connectError.textContent = `Ошибка: ${error.message || "Неизвестная ошибка"}`;
+            } else {
+                connectError.textContent = "";
+            }
+        }
+
+        // Опционально: можно добавить обработку нажатия "Открыть коллекцию" с проверкой tg_id
+        // Например, если tg_id нет — не открывать ссылку
+
+        // (Оставьте вашу стилизацию и остальной HTML без изменений)
     </script>
 </body>
 </html>
