@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>time of toys — Web3 Pass</title>
-    <!-- Официальный актуальный скрипт TON Connect UI из CDN -->
+    <title>Time Of Toys - Phygital Pass</title>
+    <!-- Официальный скрипт TON Connect UI -->
     <script src="https://unpkg.com"></script>
     <style>
         body {
@@ -33,14 +33,54 @@
             display: inline-block;
             filter: drop-shadow(0px 4px 10px rgba(212, 175, 55, 0.3));
         }
-        h2 { color: #D4AF37; font-weight: 300; letter-spacing: 3px; text-transform: uppercase; font-size: 20px; margin: 0 0 16px 0; }
+        h2 { color: #D4AF37; font-weight: 300; letter-spacing: 3px; text-transform: uppercase; font-size: 22px; margin: 0 0 16px 0; }
         p { font-size: 14px; color: #8E8E93; line-height: 1.6; margin: 0 0 32px 0; }
-        #ton-connect-btn {
+        .divider { height: 1px; background-color: #2C2C2E; margin: 32px 0; }
+
+        .btn {
+            background: rgba(30, 30, 30, 0.1);
+            color: #D4AF37;
+            border: 1px solid rgba(212, 175, 55, 0.5);
+            box-shadow: 0px 4px 15px rgba(212, 175, 55, 0.05);
+            text-decoration: none;
+            display: block;
+            box-sizing: border-box;
+            width: 100%;
+            padding: 16px;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 14px;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            margin-bottom: 16px;
+            cursor: pointer;
+        }
+        .btn:hover, .btn:active {
+            background: rgba(212, 175, 55, 0.1);
+            border-color: #D4AF37;
+            box-shadow: 0px 4px 20px rgba(212, 175, 55, 0.2);
+        }
+        
+        /* Стилизация контейнера кнопки TON Connect */
+        #ton-connect-button {
             display: flex;
             justify-content: center;
-            margin: 20px auto;
+            width: 100%;
+            margin-top: 20px;
+            min-height: 50px;
         }
-        .status { margin-top: 24px; font-size: 14px; color: #30D158; font-weight: bold; display: none; line-height: 1.4; }
+        
+        /* Принудительное приведение стилей TON Connect к роскошному Apple/Gold стилю */
+        div[class*="tc-button"] {
+            background: linear-gradient(135deg, #D4AF37 0%, #AA7C11 100%) !important;
+            color: #000000 !important;
+            font-weight: bold !important;
+            border-radius: 12px !important;
+            width: 100% !important;
+            justify-content: center !important;
+        }
+        
+        .status { margin-top: 20px; font-size: 14px; color: #30D158; font-weight: bold; display: none; line-height: 1.4; }
         .error { color: #FF453A; }
     </style>
 </head>
@@ -48,47 +88,57 @@
     <div class="container">
         <div class="logo-space">
             <span class="logo-icon">🧶</span>
-            <h2>Phygital Verification</h2>
+            <h2>Phygital Pass Verification</h2>
         </div>
 
-        <p>Подключите ваш TON-кошелек (Tonkeeper / MyTonWallet / Wallet), на котором хранится NFT-паспорт <b>time of toys</b>. Система автоматически проверит владение токеном.</p>
+        <p>Добро пожаловать в закрытый клуб владельцев лимитированных Phygital-коллекций вязаных игрушек ручной работы <b>Time of Toys</b>.<br><br>У вас еще нет NFT-паспорта из коллекции?</p>
 
-        <!-- Сюда TON Connect UI вставит премиальную кнопку -->
-        <div id="ton-connect-btn"></div>
+        <button class="btn" onclick="openGetgems()">🛍️ Открыть коллекцию на Getgems</button>
 
+        <div class="divider"></div>
+
+        <p>Уже владеете NFT-паспортом персонажа? Подключите кошелек для мгновенной верификации и оформления премиальной доставки.</p>
+
+        <!-- Контейнер, куда скрипт вставит кнопку TON Connect -->
+        <div id="ton-connect-button"></div>
+        
         <div class="status" id="status-text"></div>
     </div>
 
     <script>
-        // Инициализация TON Connect UI с легитимным манифестом
-        const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
-            manifestUrl: 'https://githubusercontent.com',
-            buttonRootId: 'ton-connect-btn'
-        });
+        const COLLECTION_ADDRESS = "EQCtAkEC6kdLU6lMHoXubJY3nB16YBMJOkNrqVuINxFNREBN";
+        
+        function openGetgems() {
+            window.open(`https://getgems.io/collection/{COLLECTION_ADDRESS}`, "_blank");
+        }
 
-        // Получаем параметры tg_id из URL (например: ?tg_id=12345)
+        // Извлекаем tg_id из строки поиска браузера
         const urlParams = new URLSearchParams(window.location.search);
         const tgId = urlParams.get('tg_id');
-
         const statusText = document.getElementById('status-text');
 
         if (!tgId) {
             statusText.style.display = "block";
             statusText.className = "status error";
-            statusText.innerText = "❌ Ошибка: Откройте страницу строго через Telegram-бота!";
+            statusText.innerText = "❌ Ошибка: Откройте страницу строго по кнопке из Telegram-бота!";
         }
 
-        // Подписываемся на изменение статуса кошелька (когда юзер нажал "Подключить" в приложении)
+        // Правильная инициализация TON Connect UI с проверенным публичным манифестом
+        const tonConnectUI = new TonConnectUI.TonConnectUI({
+            manifestUrl: 'https://github.io',
+            buttonRootId: 'ton-connect-button'
+        });
+
+        // Отслеживаем успешное подключение кошелька пользователем
         tonConnectUI.onStatusChange(async (wallet) => {
             if (wallet && tgId) {
-                // Извлекаем адрес кошелька в формате Raw/User-friendly
-                const walletAddress = wallet.account.address;
+                const walletAddress = wallet.account.address; // Получаем адрес (формат Raw)
                 
                 statusText.style.display = "block";
                 statusText.className = "status";
-                statusText.innerText = "⏳ Передаем данные в мастерскую...";
+                statusText.innerText = "⏳ Передаем данные в мастерскую Time of Toys...";
 
-                // ВАЖНО: Замените этот URL на ваш реальный домен на PythonAnywhere!
+                // URL вашего Flask-приложения на PythonAnywhere
                 const BACKEND_URL = 'https://timeoftoys.pythonanywhere.com';
 
                 try {
@@ -104,18 +154,18 @@
                     });
 
                     if (response.ok) {
-                        statusText.innerText = "✅ Кошелек успешно привязан!\nВернитесь в Telegram-бот для завершения.";
-                        // Через 2 секунды автоматически перекидываем обратно в бота
+                        statusText.innerText = "✅ Кошелек успешно верифицирован!\nВозвращайтесь в Telegram-бот.";
                         setTimeout(() => {
+                            // Бесшовно перенаправляем обратно в чат-бот
                             window.location.href = "tg://resolve?domain=time_of_toys_bot";
-                        }, 2000);
+                        }, 2500);
                     } else {
                         statusText.className = "status error";
-                        statusText.innerText = "❌ Ошибка сервера при передаче данных.";
+                        statusText.innerText = "❌ Ошибка сервера при передаче кошелька.";
                     }
                 } catch (error) {
                     statusText.className = "status error";
-                    statusText.innerText = "❌ Не удалось связаться с сервером.";
+                    statusText.innerText = "❌ Не удалось связаться с сервером PythonAnywhere.";
                 }
             }
         });
