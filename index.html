@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Time Of Toys - Phygital Pass</title>
-    <!-- Официальный скрипт TON Connect UI -->
+    <!-- Подключаем стабильную и легкую версию TON Connect UI -->
     <script src="https://unpkg.com"></script>
     <style>
         body {
@@ -61,7 +61,6 @@
             box-shadow: 0px 4px 20px rgba(212, 175, 55, 0.2);
         }
         
-        /* Стилизация контейнера кнопки TON Connect */
         #ton-connect-button {
             display: flex;
             justify-content: center;
@@ -70,8 +69,8 @@
             min-height: 50px;
         }
         
-        /* Принудительное приведение стилей TON Connect к роскошному Apple/Gold стилю */
-        div[class*="tc-button"] {
+        /* Стилизация под премиальный золотой бренд time of toys */
+        div[class*="tc-button"], button[class*="tc-button"] {
             background: linear-gradient(135deg, #D4AF37 0%, #AA7C11 100%) !important;
             color: #000000 !important;
             font-weight: bold !important;
@@ -99,7 +98,7 @@
 
         <p>Уже владеете NFT-паспортом персонажа? Подключите кошелек для мгновенной верификации и оформления премиальной доставки.</p>
 
-        <!-- Контейнер, куда скрипт вставит кнопку TON Connect -->
+        <!-- Сюда скрипт принудительно вставит кнопку -->
         <div id="ton-connect-button"></div>
         
         <div class="status" id="status-text"></div>
@@ -112,7 +111,6 @@
             window.open(`https://getgems.io/collection/{COLLECTION_ADDRESS}`, "_blank");
         }
 
-        // Извлекаем tg_id из строки поиска браузера
         const urlParams = new URLSearchParams(window.location.search);
         const tgId = urlParams.get('tg_id');
         const statusText = document.getElementById('status-text');
@@ -123,22 +121,21 @@
             statusText.innerText = "❌ Ошибка: Откройте страницу строго по кнопке из Telegram-бота!";
         }
 
-        // Правильная инициализация TON Connect UI с проверенным публичным манифестом
+        // Инициализация через классический объект первой ветки SDK
         const tonConnectUI = new TonConnectUI.TonConnectUI({
             manifestUrl: 'https://github.io',
             buttonRootId: 'ton-connect-button'
         });
 
-        // Отслеживаем успешное подключение кошелька пользователем
         tonConnectUI.onStatusChange(async (wallet) => {
             if (wallet && tgId) {
-                const walletAddress = wallet.account.address; // Получаем адрес (формат Raw)
+                // Поддерживаем разные форматы выдачи адреса в зависимости от кошелька
+                const walletAddress = wallet.account.address;
                 
                 statusText.style.display = "block";
                 statusText.className = "status";
-                statusText.innerText = "⏳ Передаем данные в мастерскую Time of Toys...";
+                statusText.innerText = "⏳ Передаем данные в мастерскую time of toys...";
 
-                // URL вашего Flask-приложения на PythonAnywhere
                 const BACKEND_URL = 'https://timeoftoys.pythonanywhere.com';
 
                 try {
@@ -156,7 +153,6 @@
                     if (response.ok) {
                         statusText.innerText = "✅ Кошелек успешно верифицирован!\nВозвращайтесь в Telegram-бот.";
                         setTimeout(() => {
-                            // Бесшовно перенаправляем обратно в чат-бот
                             window.location.href = "tg://resolve?domain=time_of_toys_bot";
                         }, 2500);
                     } else {
