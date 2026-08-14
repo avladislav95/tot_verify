@@ -93,10 +93,10 @@
             <br>Подключите кошелек Ton для мгновенной верификации и оформления премиальной доставки.
         </p>
 
-        <button id="connect-btn" onclick="openTonWallet()">Подключить кошелек Ton</button>
+        <button id="connect-btn" class="btn" onclick="openTonWallet()">Подключить кошелек Ton</button>
 
-        <div id="connect-status"></div>
-        <div id="connect-error"></div>
+        <div id="connect-status" style="display:none; color:#222; font-weight:bold;"></div>
+        <div id="connect-error" style="display:none; color:#e00;"></div>
     </div>
 
     <!-- Ton SDK CDN -->
@@ -262,6 +262,81 @@
         // Например, если tg_id нет — не открывать ссылку
 
         // (Оставьте вашу стилизацию и остальной HTML без изменений)
+        let isConnecting = false;
+let tgId = (new URLSearchParams(window.location.search)).get('tg_id');
+
+// Проверяем tg_id только при открытии страницы
+function checkTgId() {
+    if (!tgId) {
+        document.getElementById('connect-btn').disabled = true;
+        document.getElementById('connect-status').textContent = "❌ Сначала откройте страницу из Telegram-бота!";
+        document.getElementById('connect-error').style.display = "none";
+    } else {
+        document.getElementById('connect-btn').disabled = false;
+        document.getElementById('connect-status').style.display = "none";
+        document.getElementById('connect-error').style.display = "none";
+    }
+}
+checkTgId();
+
+async function openTonWallet() {
+    if (isConnecting) return; // Не даем повторно нажать во время процесса
+    isConnecting = true;
+    document.getElementById('connect-btn').disabled = true;
+    document.getElementById('connect-status').style.display = "block";
+    document.getElementById('connect-status').textContent = "⏳ Открывается окно подтверждения в Ton...";
+    document.getElementById('connect-error').style.display = "none";
+
+    try {
+        // Динамическая загрузка Ton SDK
+        const TonModule = (await import('https://cdn.jsdelivr.net/npm/@tonweb/ton@latest/dist/ton.cjs')).default;
+        const ton = new TonModule({ network: 'testnet' }); // Можно поменять на 'mainnet' если нужно
+
+        // Проверяем наличие consentUI
+        if (!ton.consentUI || !ton.consentUI.open) {
+            throw new Error("Ton SDK не поддерживает consentUI (версия SDK устарела или повреждена)");
+        }
+
+        // Открываем окно consent
+        await ton.consentUI.open();
+
+        // Ожидаем ответ из consent
+        window.addEventListener('message', handleConsentMessage, { once: true });
+    } catch (err) {
+        isConnecting = false;
+        document.getElementById('connect-btn').disabled = false;
+        document.getElementById('connect-status').style.display = "none";
+        document.getElementById('connect-error').style.display = "block";
+        document.getElementById('connect-error').textContent = "❌ Ошибка: " + (err.message || "Не удалось открыть кошелек. Проверьте интернет и попробуйте позже.");
+    }
+}
+
+// Обработка ответа от consent окна Ton
+function handleConsentMessage(event) {
+    if (
+        event.data &&
+        event.data.type === 'ton/consent' &&
+        event.data.status !== undefined
+    ) {
+        isConnecting = false;
+        document.getElementById('connect-btn').disabled = false;
+        document.getElementById('connect-status').style.display = "none";
+        document.getElementById('connect-error').style.display = "none";
+        if (event.data.status === 'granted') {
+            // Кошелек подключён!
+            const address = event.data.data?.address ?? "неизвестный адрес";
+            document.getElementById('connect-status').style.display = "block";
+            document.getElementById('connect-status').textContent = "✅ Кошелек успешно подключён: " + address;
+            // Здесь можно реализовать дальнейшую логику (например, отправить данные на сервер)
+        } else if (event.data.status === 'denied') {
+            document.getElementById('connect-status').style.display = "block";
+            document.getElementById('connect-status').textContent = "❌ Доступ к кошельку отклонён.";
+        } else {
+            document.getElementById('connect-status').style.display = "block";
+            document.getElementById('connect-status').textContent = "❓ Неизвестный статус: " + event.data.status;
+        }
+    }
+}
     </script>
 </body>
 </html>
