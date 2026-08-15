@@ -1,334 +1,190 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Phygital Pass Verification</title>
-  <meta name="description" content="Official Phygital Toys Web3 Connection">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Time Of Toys - Phygital Pass</title>
+    <style>
+        body {
+            background-color: #0E0E10;
+            color: #F5F5F7;
+            font-family: -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+        .container {
+            width: 100%;
+            max-width: 400px;
+            padding: 24px;
+            box-sizing: border-box;
+            text-align: center;
+        }
+        .logo-space { margin-bottom: 32px; }
+        .logo-icon {
+            font-size: 45px;
+            margin-bottom: 12px;
+            display: inline-block;
+            filter: drop-shadow(0px 4px 10px rgba(212, 175, 55, 0.3));
+        }
+        h2 { color: #D4AF37; font-weight: 300; letter-spacing: 3px; text-transform: uppercase; font-size: 22px; margin: 0 0 16px 0; }
+        p { font-size: 14px; color: #8E8E93; line-height: 1.6; margin: 0 0 32px 0; }
+        .divider { height: 1px; background-color: #2C2C2E; margin: 32px 0; }
 
-  <!-- Apple-style system fonts -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fontsource/4.260.0/css/fontsource.css">
-  <style>
-    /* Deep dark background */
-    body {
-      background: #0E0E10;
-      color: #F5F5F7;
-      margin: 0;
-      min-height: 100vh;
-      font-family: -apple-system, BlinkMacSystemFont, Arial, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 0;
-      transition: background 0.3s;
-    }
+        .btn {
+            background: rgba(30, 30, 30, 0.1);
+            color: #D4AF37;
+            border: 1px solid rgba(212, 175, 55, 0.5);
+            box-shadow: 0px 4px 15px rgba(212, 175, 55, 0.05);
+            text-decoration: none;
+            display: block;
+            box-sizing: border-box;
+            width: 100%;
+            padding: 16px;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 14px;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            margin-bottom: 16px;
+            cursor: pointer;
+        }
+        .btn:hover, .btn:active {
+            background: rgba(212, 175, 55, 0.1);
+            border-color: #D4AF37;
+            box-shadow: 0px 4px 20px rgba(212, 175, 55, 0.2);
+        }
 
-    /* Main container */
-    .container {
-      background: #121212;
-      border-radius: 28px;
-      box-shadow: 0 12px 32px rgba(20,20,20,0.35);
-      padding: 2.5rem 2.5rem 2rem 2.5rem;
-      width: 95vw;
-      max-width: 430px;
-      text-align: center;
-      position: relative;
-    }
+        /* Стильное модальное окно Apple-style */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0; visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+        .modal-box {
+            background: #1C1C1E;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            padding: 32px 24px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 340px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .modal-box h3 { color: #D4AF37; margin: 0 0 16px 0; font-weight: 400; letter-spacing: 1px; }
+        .modal-box p { margin-bottom: 24px; }
+        
+        .input-field {
+            width: 100%;
+            box-sizing: border-box;
+            background: #0E0E10;
+            border: 1px solid #2C2C2E;
+            padding: 16px;
+            border-radius: 12px;
+            color: #FFF;
+            font-size: 16px;
+            text-align: center;
+            margin-bottom: 20px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        .input-field:focus { border-color: #D4AF37; }
 
-    /* Title */
-    h2 {
-      font-family: -apple-system, BlinkMacSystemFont, Arial, sans-serif;
-      color: #D4AF37;
-      font-size: 2rem;
-      font-weight: 700;
-      letter-spacing: 3px;
-      margin-bottom: 1rem;
-      text-shadow: 0 2px 6px rgba(212,175,55,0.2);
-    }
-
-    /* Emoji icon */
-    .emoji-icon {
-      font-size: 52px;
-      margin-bottom: 0.6rem;
-      filter: drop-shadow(0 4px 16px rgba(212,175,55,0.18));
-      user-select: none;
-    }
-
-    /* Welcome text */
-    p.welcome {
-      color: #8E8E93;
-      font-size: 1.15rem;
-      margin-bottom: 1.2rem;
-      line-height: 1.7;
-    }
-
-    /* Getgems button */
-    a.getgems-btn {
-      display: inline-block;
-      background: transparent;
-      border: 1px solid rgba(212,175,55,0.5);
-      color: #D4AF37;
-      font-family: -apple-system, BlinkMacSystemFont, Arial, sans-serif;
-      font-weight: 700;
-      font-size: 1rem;
-      padding: 0.55em 1.25em;
-      border-radius: 12px;
-      text-decoration: none;
-      letter-spacing: 1px;
-      transition: border-color 0.2s, box-shadow 0.2s;
-      box-shadow: 0 2px 8px rgba(212,175,55,0.08);
-      cursor: pointer;
-      outline: none;
-      margin-bottom: 1.6rem;
-    }
-    a.getgems-btn:hover {
-      border-color: #D4AF37;
-      background: linear-gradient(90deg, #D4AF37 0%, #AA7C11 100%) 0.07em 0;
-      box-shadow: 0 4px 16px rgba(212,175,55,0.22);
-    }
-    a.getgems-btn::after {
-      content: "";
-      display: block;
-      width: 0;
-      height: 2px;
-      background: #D4AF37;
-      transition: width 0.3s;
-    }
-    a.getgems-btn:hover::after {
-      width: 100%;
-    }
-
-    /* Separator */
-    .separator {
-      height: 1.2px;
-      background: #2C2C2E;
-      margin: 2rem 0;
-    }
-
-    /* Instruction text */
-    p.instruction {
-      color: #BFBFBF;
-      font-size: 1rem;
-      margin-bottom: 1.5rem;
-      line-height: 1.7;
-    }
-
-    /* TON Connect container */
-    #ton-connect-button {
-      display: inline-block;
-      width: 280px;
-      height: 68px;
-      background: transparent;
-      border-radius: 12px;
-      margin: 0 auto 2rem auto;
-      box-shadow: 0 2px 16px rgba(20,20,20,0.15);
-      overflow: hidden;
-      cursor: pointer;
-      position: relative;
-      transition: box-shadow 0.2s;
-    }
-    #ton-connect-button:hover {
-      box-shadow: 0 6px 24px rgba(212,175,55,0.22);
-    }
-
-    /* Status block */
-    #status-text {
-      display: inline-block;
-      min-width: 220px;
-      color: #F5F5F7;
-      font-size: 0.98rem;
-      font-weight: 500;
-      margin-top: 0.5rem;
-      margin-left: auto;
-      margin-right: auto;
-      text-align: left;
-      transition: color 0.2s, background 0.2s;
-    }
-    #status-text.success {
-      color: #2DCC70;
-      background: linear-gradient(90deg, #E3F2E8 0%, #D4AF37 100%) 0 1px;
-    }
-    #status-text.error {
-      color: #A00;
-      background: #1C1C1C;
-    }
-    #status-text.waiting {
-      color: #E6E6E6;
-      background: #222;
-      animation: pulse 1s infinite;
-    }
-    @keyframes pulse {
-      0% { opacity: 1; }
-      50% { opacity: 0.8; }
-      100% { opacity: 1; }
-    }
-
-    /* Hide default TON Connect UI styles, apply our custom */
-    ton-connect__button,
-    ton-connect__button[style*="background"] {
-      !important;
-    }
-    ton-connect__button {
-      background: linear-gradient(135deg, #D4AF37 0%, #AA7C11 100%) !important;
-      color: #000 !important;
-      border-radius: 12px !important;
-      box-shadow: none !important;
-      font-weight: 600 !important;
-      font-size: 1rem !important;
-      border: none !important;
-      padding: 0.4em 1.2em !important;
-      transition: background 0.3s, color 0.3s;
-      outline: none !important;
-    }
-    ton-connect__button:hover {
-      background: linear-gradient(135deg, #FFD166 0%, #AA7C11 100%) !important;
-    }
-    ton-connect__modal {
-      background: #222 !important;
-      border-radius: 18px !important;
-      box-shadow: 0 8px 32px rgba(20,20,20,0.25) !important;
-      z-index: 2001 !important;
-    }
-
-    /* Responsive */
-    @media (max-width: 600px) {
-      .container { padding: 1rem 0.8rem 0.5rem 0.8rem; }
-      h2 { font-size: 1.4rem; }
-      .emoji-icon { font-size: 32px; }
-      a.getgems-btn { font-size: 0.95rem; padding: 0.35em 0.7em; }
-      #ton-connect-button { width: 95vw; height: 48px; margin: 0.7rem 0; }
-    }
-  </style>
-
-  <!-- TON Connect SDK v2.0.9 from GitHub CDN -->
-  <script src="https://github.io/tonorg/tonconnect/releases/download/v2.0.9/tonconnect.min.js"></script>
-
-  <!-- Favicon (optional, for completeness) -->
-  <!-- <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2224%22 height=%2224%22 viewBox=%220 0 24 24%22><circle cx=%2212%22 cy=%2212%22 r=%2210%22 fill=%22#D4AF37%22><text x=%2212%22 y=%2219%22 font-size=%222%22 fill=%23000%22 text-anchor=%22middle%22>🧶</text></svg>"> -->
-
+        /* Класс активации модалки */
+        .modal-overlay.active { opacity: 1; visibility: visible; }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <div>
-      <span class="emoji-icon">🧶</span>
-      <h2>Phygital Pass Verification</h2>
-      <p class="welcome">
-        Добро пожаловать в закрытый клуб владельцев лимитированных Phygital-коллекций вязаных игрушек ручной работы Time of Toys. У вас еще нет NFT-паспорта из коллекции?
-      </p>
-      <a href="https://getgems.io" class="getgems-btn" target="_blank" rel="noopener noreferrer">
-        🛍️ Открыть коллекцию на Getgems
-      </a>
-      <div class="separator"></div>
-      <p class="instruction">
-        Уже владеете NFT-паспортом персонажа? Подключите кошелек для мгновенной верификации и оформления премиальной доставки.
-      </p>
-      <div id="ton-connect-button"></div>
-      <div id="status-text" style="display:none"></div>
-  </div>
 
-  <script>
-    // === 1. Парсим tg_id из адресной строки ===
-    const urlParams = new URLSearchParams(window.location.search);
-    const tgId = urlParams.get("tg_id");
+    <div class="container">
+        <div class="logo-space">
+            <span class="logo-icon">🧶</span>
+            <h2>Phygital Pass Verification</h2>
+        </div>
 
-    // === 2. Подготовка статус-блока ===
-    const statusDiv = document.getElementById('status-text');
-    function setStatus(msg, type = '') {
-      statusDiv.innerHTML = msg;
-      statusDiv.className = 'status-text ' + (type === 'success' ? 'success' : type === 'error' ? 'error' : 'waiting');
-      if (type === 'success') {
-        // После 2.5 сек автопереход в Telegram
-        setTimeout(() => {
-          window.location.href = "tg://resolve?domain=time_of_toys_bot";
-        }, 2500);
-      }
-      statusDiv.style.display = type !== 'waiting' ? 'block' : 'block';
-    }
-    setStatus('', 'waiting');
-    setStatus('Считывается tg_id…', 'waiting');
+        <p>Добро пожаловать в закрытый клуб владельцев лимитированных Phygital-коллекций вязаных игрушек ручной работы <b>Time of Toys</b>.<br><br>У вас еще нет NFT-паспорта из коллекции?</p>
 
-    // === 3. Проверка tg_id ===
-    if (!tgId || tgId === '') {
-      setStatus('❌ Ошибка: Откройте страницу строго по кнопке из Telegram-бота!', 'error');
-      return;
-    }
+        <button class="btn" onclick="openGetgems()">🛍️ Открыть коллекцию на Getgems</button>
 
-    // === 4. Инициализация TON Connect ===
-    const tonConnectUI = new TonConnectUI.TonConnectUI({
-      container: document.getElementById('ton-connect-button'),
-      theme: 'dark', // подходит по нашему фону
-      walletTypes: ['TON'], // только TON
-      // Можно добавить иконку или оверлей, но Apple-style — минимализм
-    });
+        <div class="divider"></div>
 
-    // === 5. Кастомизация внешнего вида TON Connect (важно после инициализации!) ===
-    // Поиск кнопки и перекраска
-    setTimeout(() => {
-      const btn = document.querySelector('ton-connect__button');
-      if (btn) {
-        btn.style.background = 'linear-gradient(135deg, #D4AF37 0%, #AA7C11 100%)';
-        btn.style.color = '#000';
-        btn.style.borderRadius = '12px';
-      }
-    }, 400);
+        <p>Уже владеете NFT-паспортом персонажа? Нажмите кнопку ниже для запуска мгновенной верификации по блокчейн-транзакции.</p>
 
-    // === 6. Обработка событий TON Connect ===
-    let walletAddress = null;
-    tonConnectUI.onStatusChange(async (status) => {
-      if (status.type === 'connected') {
-        // Кошелек подключен
-        walletAddress = status.wallet.account.address;
-        setStatus('✅ Кошелек подключен. Отправка данных...', 'waiting');
-        await sendWalletToServer(walletAddress, tgId);
-      } else if (status.type === 'disconnected') {
-        setStatus('❌ Кошелек отключен.', 'error');
-      } else if (status.type === 'error') {
-        setStatus('❌ Ошибка TON Connect: ' + (status.error?.message || status.error), 'error');
-      } else if (status.type === 'loading') {
-        setStatus('⏳ Подключение кошелька…', 'waiting');
-      }
-    });
+        <button class="btn" style="background: linear-gradient(135deg, #D4AF37 0%, #AA7C11 100%); color: #000000; border: none;" onclick="toggleModal(true)">ВЕРИФИЦИРОВАТЬ</button>
+    </div>
 
-    // === 7. POST-запрос на Flask-сервер ===
-    async function sendWalletToServer(walletAddress, tgId) {
-      const endpoint = "https://pythonanywhere.com/api/verify"; // Замените на актуальный endpoint, если нужно
-      const url = `https://pythonanywhere.com/api/verify`; // или ваш Flask-роут, например /api/verify
-      const body = {
-        "wallet_address": walletAddress,
-        "tg_id": tgId
-      };
-      const resp = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(body)
-      });
-      let msg = '';
-      let type = '';
-      if (resp.ok) {
-        const text = await resp.text();
-        if (text.trim() === 'ok' || text.trim() === 'success') {
-          msg = '✅ Кошелек успешно верифицирован!';
-          type = 'success';
-        } else {
-          msg = '❌ Ответ от сервера: ' + text;
-          type = 'error';
+    <!-- Модальное окно ввода номера игрушки -->
+    <div class="modal-overlay" id="payment-modal">
+        <div class="modal-box">
+            <h3>Номер объекта</h3>
+            <p>Пожалуйста, введите номер вашей игрушки (например: 01, 14 или 25) для формирования цифрового комментария.</p>
+            
+            <input type="text" id="toy-number" class="input-field" placeholder="Например: 01" maxlength="5">
+            
+            <button class="btn" style="background: #D4AF37; color: #000; border: none; margin-bottom: 12px;" onclick="startTonTransfer()">🔗 Открыть кошелек</button>
+            <button class="btn" style="border: none; color: #8E8E93; padding: 0; margin: 0; font-size: 13px; background: none;" onclick="toggleModal(false)">Отмена</button>
+        </div>
+    </div>
+
+    <script>
+        // КОНФИГУРАЦИЯ БРЕНДА
+        const BRAND_WALLET = "UQDcoM8zLVW_7hBmk_O76er4hjbd7bOQw5bwC2t52c3fZWZt"; // <-- ВСТАВЬТЕ СВОЙ АДРЕС TON КОШЕЛЬКА
+        const GETGEMS_COLLECTION = "EQCtAkEC6kdLU6lMHoXubJY3nB16YBMJOkNrqVuINxFNREBN";
+        const MASTER_TELEGRAM = "time_of_toys_bot"; // <-- Имя вашего бота или аккаунта мастера для связи
+
+        function openGetgems() {
+            window.open(`https://getgems.io/collection/{GETGEMS_COLLECTION}`, "_blank");
         }
-      } else {
-        const err = await resp.text();
-        msg = '❌ Ошибка сети/сервера: ' + (err || 'Не удалось отправить данные');
-        type = 'error';
-      }
-      setStatus(msg, type);
-    }
 
-    // === 8. Скрыть статус "waiting" если пользователь закрывает вкладку ===
-    window.onbeforeunload = function() {
-      if (statusDiv.classList.contains('waiting')) {
-        setStatus('Процесс прерван.', 'error');
-      }
-    };
-  </script>
+        function toggleModal(show) {
+            const modal = document.getElementById('payment-modal');
+            if (show) {
+                modal.classList.add('active');
+                document.getElementById('toy-number').focus();
+            } else {
+                modal.classList.remove('active');
+            }
+        }
+
+        function startTonTransfer() {
+            const toyNum = document.getElementById('toy-number').value.trim();
+            
+            if (!toyNum) {
+                alert("Пожалуйста, введите номер вашей игрушки!");
+                return;
+            }
+
+            // Сумма перевода: 0.001 TON (1000000 нанотон)
+            const amount = 1000000;
+            // Формируем премиальный строковый комментарий автоматически
+            const comment = encodeURIComponent(`time of toys — verify NFT #${toyNum}`);
+            
+            // Собираем криптографический Deep Link
+            const tonLink = `ton://transfer/${BRAND_WALLET}?amount=${amount}&text=${comment}`;
+            
+            // Закрываем модальное окно
+            toggleModal(false);
+
+            // Аппаратно открываем кошелек на устройстве пользователя
+            window.location.href = tonLink;
+
+            // Через 3 секунды после открытия кошелька выводим финальную роскошную инструкцию по доставке
+            setTimeout(() => {
+                alert(`Транзакция успешно сформирована в вашем кошельке!\n\nПосле подтверждения платежа, пожалуйста, вернитесь в наш Telegram-бот (@${MASTER_TELEGRAM}) и отправьте мастеру ваши данные СДЭК для бережной доставки.`);
+                window.location.href = `tg://resolve?domain=${MASTER_TELEGRAM}`;
+            }, 3000);
+        }
+    </script>
 </body>
 </html>
