@@ -110,7 +110,7 @@
     <div class="container">
         <div class="logo-space">
             <span class="logo-icon">🧶</span>
-            <h2>Phygital Pass Verification</h2>
+            <h2>Time of Toys: Phygital</h2>
         </div>
 
         <p>Добро пожаловать в закрытый клуб владельцев лимитированных Phygital-коллекций вязаных игрушек ручной работы <b>Time of Toys</b>.<br><br>У вас еще нет NFT-паспорта из коллекции?</p>
@@ -119,7 +119,7 @@
 
         <div class="divider"></div>
 
-        <p>Уже владеете NFT-паспортом персонажа? Нажмите кнопку ниже для запуска мгновенной верификации по блокчейн-транзакции.</p>
+        <p>Уже владеете NFT-паспортом персонажа? Нажмите кнопку ниже для запуска верификации по блокчейн-транзакции.</p> <p title='Транзакция (0.001 GRAM) нужна для подтверждения того, что именно вы являетесь владельцем NFT-паспорта персонажа и исключения мошенничества'>❔</p>
 
         <button class="btn" style="background: linear-gradient(135deg, #D4AF37 0%, #AA7C11 100%); color: #000000; border: none;" onclick="toggleModal(true)">ВЕРИФИЦИРОВАТЬ</button>
     </div>
@@ -128,9 +128,9 @@
     <div class="modal-overlay" id="payment-modal">
         <div class="modal-box">
             <h3>Номер объекта</h3>
-            <p>Пожалуйста, введите номер вашей игрушки (например: 01, 14 или 25) для формирования цифрового комментария.</p>
+            <p>Пожалуйста, введите номер вашей игрушки, указанный в карточке NFT, (например: G-01, M-03) для формирования цифрового комментария.</p>
             
-            <input type="text" id="toy-number" class="input-field" placeholder="Например: 01" maxlength="5">
+            <input type="text" id="toy-number" class="input-field" placeholder="Например: G-01" maxlength="10">
             
             <button class="btn" style="background: #D4AF37; color: #000; border: none; margin-bottom: 12px;" onclick="startTonTransfer()">🔗 Открыть кошелек</button>
             <button class="btn" style="border: none; color: #8E8E93; padding: 0; margin: 0; font-size: 13px; background: none;" onclick="toggleModal(false)">Отмена</button>
@@ -165,7 +165,7 @@
                 return;
             }
 
-            // Сумма перевода: 0.001 TON (1000000 нанотон)
+            // Сумма перевода: 0.001 GRAM (1000000 нанограм)
             const amount = 1000000;
             // Формируем премиальный строковый комментарий автоматически
             const comment = encodeURIComponent(`time of toys — verify NFT #${toyNum}`);
@@ -181,7 +181,7 @@
 
             // Через 3 секунды после открытия кошелька выводим финальную роскошную инструкцию по доставке
             setTimeout(() => {
-                alert(`Транзакция успешно сформирована в вашем кошельке!\n\nПосле подтверждения платежа, пожалуйста, вернитесь в наш Telegram-бот (@${MASTER_TELEGRAM}) и отправьте мастеру ваши данные СДЭК для бережной доставки.`);
+                alert(`Транзакция успешно сформирована в вашем кошельке!\n\nПосле подтверждения платежа, пожалуйста, перейдите в наш Telegram-бот (@${MASTER_TELEGRAM}) для оформления доставки.`);
                 window.location.href = `tg://resolve?domain=${MASTER_TELEGRAM}`;
             }, 3000);
         }
