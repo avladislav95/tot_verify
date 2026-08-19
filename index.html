@@ -35,6 +35,48 @@
         p { font-size: 14px; color: #8E8E93; line-height: 1.6; margin: 0 0 32px 0; }
         .divider { height: 1px; background-color: #2C2C2E; margin: 32px 0; }
 
+        .tooltip {
+        display: none;
+        position: absolute;
+        background: #222;
+        color: #fff;
+        border-radius: 6px;
+        padding: 8px 16px;
+        max-width: 230px;
+        white-space: pre-wrap;
+        font-size: 15px;
+        z-index: 9999;
+        box-shadow: 0 4px 16px #0002;
+        transition: opacity 0.2s;
+        pointer-events: none;
+        }
+        .tooltip.trigger {
+        position: relative;
+        display: inline-block;
+        cursor: pointer;
+        user-select: none;
+        touch-action: manipulation; /* чтобы не конфликтовало с скроллом */
+        }
+        /* Позиционирование подсказки */
+        .tooltip.visible {
+        display: block;
+        }
+        /* Для десктопа: по наведению */
+        .tooltip.trigger:hover .tooltip {
+        display: block;
+        left: 50%;
+        transform: translateX(-50%);
+        bottom: 16px;
+        }
+        /* Мобильные: по тапу */
+        .tooltip.trigger.touchactive .tooltip {
+        display: block;
+        left: 0;
+        top: 100%;
+        transform: translateY(-100%);
+        padding-left: 16px;
+        }
+        
         .btn {
             background: rgba(30, 30, 30, 0.1);
             color: #D4AF37;
@@ -120,8 +162,12 @@
         <div class="divider"></div>
 
         <!-- <p>Уже владеете NFT-паспортом персонажа? Нажмите кнопку ниже для запуска верификации по блокчейн-транзакции.</p> <p title='Транзакция (0.001 GRAM) нужна для подтверждения того, что именно вы являетесь владельцем NFT-паспорта персонажа и исключения мошенничества'>❔</p> -->
-        <p data-tooltip="❓ Транзакция (0.001 GRAM) нужна для подтверждения того, что именно вы являетесь владельцем NFT-паспорта персонажа и исключения мошенничества">Уже владеете NFT-паспортом персонажа? 
-        <span class="tooltip-trigger" tabindex="0">Нажмите кнопку ниже для запуска верификации по блокчейн-транзакции.</span>
+        <p>
+          Уже владеете NFT-паспортом персонажа?
+          <span class="tooltip.trigger" id="verify-tip">Нажмите кнопку ниже для запуска верификации по блокчейн-транзакции</span>
+          <div class="tooltip" id="verify-tooltip">
+            ❓ Транзакция (0.001 GRAM) нужна для подтверждения того, что именно вы являетесь владельцем NFT-паспорта персонажа и исключения мошенничества.
+          </div>
         </p>
         
         
@@ -142,6 +188,47 @@
     </div>
 
     <script>
+        const trigger = document.getElementById('verify-tip');
+        const tooltip = document.getElementById('verify-tooltip');
+        let isMobile = typeof window.orientation !== "undefined" || window.innerWidth < 600;
+
+        // Для десктопа: по наведению
+        if (!isMobile) {
+          trigger.addEventListener('mouseenter', () => tooltip.classList.add('visible'));
+          trigger.addEventListener('mouseleave', () => tooltip.classList.remove('visible'));
+        }
+        // Для мобильных: по тапу
+        trigger.addEventListener('touchstart', function() {
+          // Фокус на триггере для стилей
+          this.focus();
+          tooltip.classList.add('visible');
+          setTimeout(() => {
+            // Возвращаем обратно после короткой задержки
+            tooltip.classList.remove('visible');
+          }, 3000); // 3 секунды
+        });
+        // Дополнительно: если нажата кнопка (focus), показываем подсказку
+        trigger.addEventListener('focus', function() {
+          tooltip.classList.add('visible');
+        });
+        trigger.addEventListener('blur', function() {
+          tooltip.classList.remove('visible');
+        });
+        // Если на мобильных, позиционируем подсказку под триггером
+        if (isMobile) {
+          trigger.addEventListener('touchstart', function(e) {
+            // Убедимся, что видимость снята
+            tooltip.classList.remove('visible');
+            // Позиционируем под текстом
+            tooltip.style.left = trigger.offsetLeft + 'px';
+            tooltip.style.top = (trigger.offsetTop + trigger.offsetHeight) + 'px';
+            tooltip.style.display = 'block';
+            tooltip.style.position = 'absolute';
+            // Через 3 сек скрываем
+            setTimeout(() => {
+              tooltip.style.display = 'none';
+            }, 3000);
+          });
         // КОНФИГУРАЦИЯ БРЕНДА
         const BRAND_WALLET = "UQDcoM8zLVW_7hBmk_O76er4hjbd7bOQw5bwC2t52c3fZWZt"; // <-- ВСТАВЬТЕ СВОЙ АДРЕС TON КОШЕЛЬКА
         const GETGEMS_COLLECTION = "EQCtAkEC6kdLU6lMHoXubJY3nB16YBMJOkNrqVuINxFNREBN";
