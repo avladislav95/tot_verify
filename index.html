@@ -34,50 +34,6 @@
         h2 { color: #D4AF37; font-weight: 300; letter-spacing: 3px; text-transform: uppercase; font-size: 22px; margin: 0 0 16px 0; }
         p { font-size: 14px; color: #8E8E93; line-height: 1.6; margin: 0 0 32px 0; }
         .divider { height: 1px; background-color: #2C2C2E; margin: 32px 0; }
-
-        .tooltip {
-            display: none;
-            position: absolute;
-            background: #222;
-            color: #fff;
-            border-radius: 6px;
-            padding: 8px 16px;
-            width: 100%;
-            max-width: 300px;
-            box-sizing: border-box;
-            white-space: pre-wrap;
-            font-size: 15px;
-            z-index: 9999;
-            box-shadow: 0 4px 16px #0002;
-            transition: opacity 0.2s;
-            pointer-events: none;
-        }
-        .tooltip.trigger {
-            position: relative;
-            display: inline-block;
-            cursor: pointer;
-            user-select: none;
-            touch-action: manipulation; /* чтобы не конфликтовало с скроллом */
-        }
-        /* Позиционирование подсказки */
-        .tooltip.visible {
-            display: block;
-        }
-        /* Для десктопа: по наведению */
-        .tooltip.trigger:hover .tooltip {
-            display: block;
-            left: 50%;
-            transform: translateX(-50%);
-            bottom: 16px;
-        }
-        /* Мобильные: по тапу */
-        .tooltip.trigger.touchactive .tooltip {
-            display: block;
-            left: 0;
-            top: 100%;
-            transform: translateY(-100%);
-            padding-left: 16px;
-        }
         
         .btn {
             background: rgba(30, 30, 30, 0.1);
@@ -190,38 +146,6 @@
     </div>
 
     <script>
-        const trigger = document.getElementById('verify-tip');
-        const tooltip = document.getElementById('verify-tooltip');
-        let isMobile = typeof window.orientation !== "undefined" || window.innerWidth < 600;
-
-        function showTooltip() {
-            tooltip.className = 'tooltip visible';
-            // Если нужен плавный эффект появления:
-            // tooltip.style.opacity = '1';
-            // setTimeout(() => tooltip.style.opacity='1', 50);
-        }
-
-        function hideTooltip() {
-            tooltip.className = 'tooltip';
-        }
-
-        if (isMobile) {
-            trigger.addEventListener('touchstart', showTooltip);
-            trigger.addEventListener('touchend', function() {
-                setTimeout(hideTooltip, 3000);
-            });
-            // Скрыть при клике вне триггера
-            document.addEventListener('click', function(e) {
-                if (!trigger.contains(e.target) && e.target !== trigger) hideTooltip();
-            });
-        } else {
-            // Для десктопа — стандартная логика на hover/focus
-            trigger.addEventListener('mouseenter', showTooltip);
-            trigger.addEventListener('mouseleave', hideTooltip);
-            trigger.addEventListener('focus', showTooltip);
-            trigger.addEventListener('blur', hideTooltip);
-        }
-
         // КОНФИГУРАЦИЯ БРЕНДА
         const BRAND_WALLET = "UQDcoM8zLVW_7hBmk_O76er4hjbd7bOQw5bwC2t52c3fZWZt"; // <-- ВСТАВЬТЕ СВОЙ АДРЕС TON КОШЕЛЬКА
         const GETGEMS_COLLECTION = "EQCtAkEC6kdLU6lMHoXubJY3nB16YBMJOkNrqVuINxFNREBN";
